@@ -2,10 +2,7 @@ package com.enigma.tokosaya.main;
 
 import com.enigma.tokosaya.config.DBConnector;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Main {
@@ -20,9 +17,11 @@ public class Main {
         DBConnector dbConnector = new DBConnector();
         Connection connection = dbConnector.connect();
 
-        Statement statement = connection.createStatement();
-        String querynya = "SELECT * FROM customer where email ='"+ email+"' AND  password = '"+ password +"'";
-        ResultSet resultSet = statement.executeQuery(querynya);
+        String querynya = "SELECT * FROM customer where email = ? AND password = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(querynya);
+        preparedStatement.setString(1, email);
+        preparedStatement.setString(2, password);
+        ResultSet resultSet = preparedStatement.executeQuery();
 
         if(resultSet.next()) {
             System.out.println("Login success!!!");
@@ -31,7 +30,6 @@ public class Main {
             System.out.println("Login Failed!!!");
         }
 
-        statement.close();
         connection.close();
 
     }
